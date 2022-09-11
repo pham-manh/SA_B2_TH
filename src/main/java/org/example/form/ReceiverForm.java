@@ -77,7 +77,7 @@ public class ReceiverForm extends JFrame {
                     if (msg instanceof TextMessage tm) {
                         String txt = tm.getText();
                         System.out.println("Nhận được " + txt);
-                       textField1.setText(txt);
+                        textField1.setText(txt);
                         msg.acknowledge();//gửi tín hiệu ack
                     } else if (msg instanceof ObjectMessage om) {
                         System.out.println(om);
