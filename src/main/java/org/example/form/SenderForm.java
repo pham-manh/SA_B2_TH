@@ -42,36 +42,30 @@ public class SenderForm extends JFrame {
 
     private void sender(String str) throws Exception {
         BasicConfigurator.configure();
-//config environment for JNDI
-        Properties settings = new Properties();
-        settings.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+        Properties setting = new Properties();
+        setting.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                 "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
-        settings.setProperty(Context.PROVIDER_URL, "tcp://localhost:61616");
-//create context
-        Context ctx = new InitialContext(settings);
-//lookup JMS connection factory
-        ConnectionFactory factory =
-                (ConnectionFactory) ctx.lookup("ConnectionFactory");
-//lookup destination. (If not exist-->ActiveMQ create once)
-        Destination destination =
-                (Destination) ctx.lookup("dynamicQueues/thanthidet");
-//get connection using credential
-        Connection con = factory.createConnection("admin", "admin");
-//connect to MOM
-        con.start();
-//create session
-        Session session = con.createSession(
-                /*transaction*/false,
-                /*ACK*/Session.AUTO_ACKNOWLEDGE
+        setting.setProperty(Context.PROVIDER_URL,"tcp://localhost:61616");
+        Context context = new InitialContext(setting);
+        ConnectionFactory factory = (ConnectionFactory) context.lookup("ConnectionFactory");
+        Destination destination = (Destination)
+                context.lookup("dynamicQueues/phamdinhmanh");
+        Connection connection = factory.createConnection("admin","admin");
+        connection.start();
+
+        Session session = connection.createSession(
+                false,Session.AUTO_ACKNOWLEDGE
         );
-//create producer
+
         MessageProducer producer = session.createProducer(destination);
-//create text message
-        Message msg = session.createTextMessage(str);
+
+        Message msg = session.createTextMessage(txt_Text.getText());
+
         producer.send(msg);
-//shutdown connection
+
         session.close();
-        con.close();
-        System.out.println("Finished...");
+        connection.close();
+        System.out.println("Done...");
+
     }
 }
